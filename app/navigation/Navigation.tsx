@@ -1,16 +1,36 @@
-import { useAuth } from '@/hooks/useAuth';
-import { AuthContext } from '@/providers/AuthProvider';
-import React, { useContext } from 'react';
-import { View, Text } from 'react-native';
+import BottomMenu from '@/components/ui/layout/bottom-menu/BottomMenu'
+import { useAuth } from '@/hooks/useAuth'
+import { useNavigationContainerRef } from '@react-navigation/native'
+import React, { FC, useEffect, useState } from 'react'
+import { View, Text } from 'react-native'
 
-const Navigation = () => {
-    const {user} = useAuth()
-    
-    return (
-        <View>
-            
-        </View>
-    );
-};
+const Navigation: FC = () => {
+	const { user } = useAuth()
+	const [currentRoute, setCurrentRoute] = useState<string | undefined>(
+		undefined
+	)
 
-export default Navigation;
+	const navRef = useNavigationContainerRef()
+
+	useEffect(() => {
+		setCurrentRoute(navRef.getCurrentRoute()?.name)
+
+		const listener = navRef.addListener('state', () =>
+			setCurrentRoute(navRef.getCurrentRoute()?.name)
+		)
+
+		return () => {
+			navRef.removeListener('state', listener)
+		}
+	}, [])
+
+	return (
+		<>
+			{user && currentRoute && (
+				<BottomMenu nav={navRef.navigate} currentRoute={currentRoute} />
+			)}
+		</>
+	)
+}
+
+export default Navigation
