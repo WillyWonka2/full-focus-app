@@ -1,4 +1,5 @@
-import React, { Dispatch, SetStateAction, createContext } from 'react';
+import * as Splash from 'expo-splash-screen'
+import React, { Dispatch, FC, PropsWithChildren, SetStateAction, createContext, useEffect, useState } from 'react';
 import { View, Text } from 'react-native';
 import type {IUser} from '@/types/user.interface.ts'
 
@@ -9,15 +10,21 @@ interface IContext {
     setUser: Dispatch<SetStateAction<TypeUserState>>
 }
 
-export const AuthContext = createContext({
+export const AuthContext = createContext({} as IContext)
 
-})
+Splash.preventAutoHideAsync()
 
-const AuthProvider = () => {
+const AuthProvider: FC<PropsWithChildren<unknown>> = ({children}) => {
+    const [user, setUser] = useState<TypeUserState>(null) 
+
+    useEffect(()=>{
+        // get user from async storage
+    }, [])
+
     return (
-        <View>
-            
-        </View>
+        <AuthContext.Provider value={{user, setUser}}>
+            {children}
+        </AuthContext.Provider>
     );
 };
 
