@@ -9,10 +9,6 @@ import Statistics from "@/components/screens/statistics/Statistics";
 
 export const routes: IRoute[] = [
     {
-        name: 'Auth',
-        component: Auth
-    },
-    {
         name: 'Home',
         component: Home
     },
