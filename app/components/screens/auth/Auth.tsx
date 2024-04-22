@@ -1,12 +1,63 @@
-import React, { FC } from 'react';
-import { View, Text } from 'react-native';
+import Button from '@/components/ui/layout/Button'
+import Loader from '@/components/ui/layout/loader'
+import { useAuth } from '@/hooks/useAuth'
+import { IAuthFormData } from '@/types/auth.interface'
+import React, { FC, useState } from 'react'
+import { SubmitHandler, useForm } from 'react-hook-form'
+import {
+	View,
+	Text,
+	TouchableWithoutFeedback,
+	Keyboard,
+	Pressable
+} from 'react-native'
 
 const Auth: FC = () => {
-    return (
-        <View>
-            
-        </View>
-    );
-};
+	const [isReq, setIsReq] = useState(false)
 
-export default Auth;
+	const { control, reset, handleSubmit } = useForm<IAuthFormData>({
+		mode: 'onChange'
+	})
+
+	const { setUser } = useAuth()
+
+	const onSubmit: SubmitHandler<IAuthFormData> = data => {
+		setUser({
+			_id: '',
+			...data
+		})
+	}
+
+	const isLoading = false
+
+	return (
+		<TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
+			<View className='items-center justify-center flex-1'>
+				<View className='w-3/4'>
+					<Text className='text-white text-4xl text-center font-bold'>
+						{isReq ? 'Sign Up' : ' Sign in'}
+					</Text>
+					{isLoading ? (
+						<Loader />
+					) : (
+						<>
+							{/* Fields */}
+
+							<Button onPress={handleSubmit(onSubmit)}>Let's go</Button>
+							<Pressable
+								onPress={() => setIsReq(!isReq)}
+								className='w-16 ml-auto'
+							>
+								<Text className='text-opacity-60 text-white text-base mt-3 text-right'>
+									{isReq ? 'Login' : 'Register'}
+								</Text>
+							</Pressable>
+						</>
+					)}
+				</View>
+			</View>
+		</TouchableWithoutFeedback>
+	)
+}
+
+export default Auth

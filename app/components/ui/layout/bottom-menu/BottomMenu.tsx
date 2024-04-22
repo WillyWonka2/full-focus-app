@@ -16,7 +16,7 @@ const BottomMenu: FC<IBottomMenu> = props => {
 
 	return (
 		<View
-			className='pt-5 px-3 flex-row justify-between items-center w-full'
+			className='pt-5 px-3 flex-row justify-between items-center w-full bg-[#1E1C2E]'
 			style={{
 				paddingBottom: bottom + 10
 			}}
