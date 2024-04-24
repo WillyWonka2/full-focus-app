@@ -3,17 +3,15 @@ import Loader from '@/components/ui/layout/loader'
 import { useAuth } from '@/hooks/useAuth'
 import { IAuthFormData } from '@/types/auth.interface'
 import React, { FC, useState } from 'react'
-import { Controller, SubmitHandler, useForm } from 'react-hook-form'
+import {SubmitHandler, useForm } from 'react-hook-form'
 import {
 	View,
 	Text,
 	TouchableWithoutFeedback,
 	Keyboard,
-	Pressable,
-	TextInput
+	Pressable
 } from 'react-native'
-import cn from 'clsx'
-import { validEmail } from './email.rgx'
+import AuthFields from './AuthFields'
 
 const Auth: FC = () => {
 	const [isReq, setIsReq] = useState(false)
@@ -29,6 +27,7 @@ const Auth: FC = () => {
 			_id: '',
 			...data
 		})
+		reset()
 	}
 
 	const isLoading = false
@@ -45,42 +44,7 @@ const Auth: FC = () => {
 					) : (
 						<>
 							{/* Fields */}
-							<Controller
-								control={control}
-								name='email'
-								rules={{
-									required: 'Email is required',
-									pattern: {
-										value:  validEmail,
-										message: 'Your Email is invalid!'
-									}
-								}}
-								render={({
-									field: { value, onChange, onBlur },
-									fieldState: { error }
-								}) => (
-									<>
-										<View
-											className={cn(
-												'rounded bg-[#272541] border-solid border pb-3 pt-3 px-4 my-2',
-												!!error ? 'border-red-500' : 'border-trasnparent'
-											)}
-										>
-											<TextInput
-												placeholder='Enter email'
-												value={value}
-												onChangeText={onChange}
-												onBlur={onBlur}
-												autoCapitalize='none'
-												className='text-white text-lg leading-5'
-											/>
-										</View>
-										{error && (
-											<Text className='text-red-500'>{error.message}</Text>
-										)}
-									</>
-								)}
-							/>
+							<AuthFields control={control}/>
 							<Button onPress={handleSubmit(onSubmit)}>Let's go</Button>
 							<Pressable
 								onPress={() => setIsReq(!isReq)}
