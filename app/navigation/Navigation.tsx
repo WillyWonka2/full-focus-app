@@ -5,7 +5,6 @@ import {
 	useNavigationContainerRef
 } from '@react-navigation/native'
 import React, { FC, useEffect, useState } from 'react'
-import { View, Text } from 'react-native'
 import PrivateNavigation from './PrivateNavigation'
 
 const Navigation: FC = () => {
