@@ -1,11 +1,13 @@
+import Layout from '@/components/ui/layout/Layout';
 import React, { FC } from 'react';
 import { View, Text } from 'react-native';
+import Timer from './timer/Timer';
 
 const Home: FC = () => {
     return (
-        <View>
-            
-        </View>
+       <Layout title='Timer'>
+        <Timer/>
+       </Layout>
     );
 };
 
