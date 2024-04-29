@@ -18,7 +18,7 @@ const Layout: FC<PropsWithChildren<{ title?: string }>> = ({
 				}}
 			>
 				{title && <Text className='text-3xl text-white font-semibold text-center'>{title}</Text>}
-				<View>{children}</View>
+				<View className='flex-1'>{children}</View>
 			</View>
 		</SafeAreaView>
 	)
