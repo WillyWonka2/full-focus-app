@@ -7,26 +7,40 @@ import { AppConstant } from '@/app.const'
 import { CountdownCircleTimer } from 'react-native-countdown-circle-timer'
 import { EnumStatus } from './timer.interface'
 
-const flowDuration = 1 * 60
+const flowDuration = 1 * 10
 const sessionCount = 7
-const breakDuration = 1 * 60
+const breakDuration = 1 * 20
 // ToDo arrow next and prev
 
 const Timer: FC = () => {
 	const [isStarting, setIsStarting] = useState<true | false>(false)
-	const [status, setStatus] = useState<EnumStatus>(EnumStatus.REST)
-	const [currentSession, setCurrentSession] = useState<Number>(0)
+	const [status, setStatus] = useState<EnumStatus>(EnumStatus.WORK)
+	const [currentSession, setCurrentSession] = useState<number>(1)
 
+	function statusHandler(newStatus:string){
+		return newStatus == EnumStatus.WORK ? breakDuration : flowDuration
+	}
 	return (
 		<View className='flex-1 justify-center'>
 			<View className='self-center'>
+				{/* TODO */}
 				<CountdownCircleTimer
 					isPlaying={isStarting}
 					duration={flowDuration}
 					colors={['#3A3570', '#664EF3']}
-					colorsTime={[7, 0]}
+					colorsTime={[
+						statusHandler(status),
+						0
+					]}
 					trailColor='#2F2F4C'
-					onComplete={() => setIsStarting(false)}
+					onComplete={() => {
+						setCurrentSession(prev => prev + 1)
+						setStatus(status === EnumStatus.REST ? EnumStatus.WORK : EnumStatus.REST)
+						return {
+							shouldRepeat: true,
+							newInitialRemainingTime: statusHandler(status)
+						}
+					}}
 					size={320}
 					strokeWidth={15}
 				>
@@ -63,8 +77,20 @@ const Timer: FC = () => {
 								className='flex-row items-center justify-center'
 								key={`round ${index}`}
 							>
-								<View className='w-4 h-4 bg-primary rounded-full' />
-								{index + 1 != 7 && <View className='w-5 h-0.5 bg-primary' />}
+								<View
+									className={cn('w-4 h-4 bg-[#2C2B3C] rounded-full', {
+										'bg-primary': index + 1 <= currentSession,
+										'w-6 h-6 bg-transparent border-4 border-indigo-500':
+											index === currentSession - 1
+									})}
+								/>
+								{index + 1 != sessionCount && (
+									<View
+										className={cn('w-5 h-0.5 bg-[#2C2B3C]', {
+											'bg-primary': index + 2 <= currentSession
+										})}
+									/>
+								)}
 							</View>
 						))}
 				</View>

@@ -15,7 +15,7 @@ const Profile = () => {
 				<Text className="text-xl font-bold my-2 text-[#664EFE]">{user?.email}</Text>
 			</View>
 
-			<Button onPress={() => setUser(null)} className='mt-auto'>Logout</Button>
+			<Button onPress={() => setUser(null)} className='mt-auto mb-10'>Logout</Button>
 		</Layout>
 	)
 }
