@@ -20,7 +20,6 @@ const MenuItem: FC<IMenuItemProps> = ({ currentRoute, nav, item }) => {
 				name={item.iconName}
 				size={26}
 				color={isActive ? AppConstant.primary : AppConstant.notActiveColor}
-				className=''
 				style = {isActive && AppConstant.shadow} 
 			/>
 		</Pressable>
