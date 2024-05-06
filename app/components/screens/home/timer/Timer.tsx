@@ -5,72 +5,92 @@ import React from 'react'
 import { View, Text, Pressable } from 'react-native'
 import { AppConstant } from '@/app.const'
 import { CountdownCircleTimer } from 'react-native-countdown-circle-timer'
-import { EnumStatus } from './timer.interface'
+import { EnumStatus, ITimer } from './timer.interface'
 
 const flowDuration = 1 * 5
 const sessionCount = 7
 const breakDuration = 1 * 7
 const isSmallIndicator = sessionCount > 7
-// ToDo arrow next and prev
 
 const Timer: FC = () => {
-	const [isStarting, setIsStarting] = useState<true | false>(false)
-	const [status, setStatus] = useState<EnumStatus>(EnumStatus.WORK)
-	const [currentSession, setCurrentSession] = useState<number>(1)
-	const [duration, setDuration] = useState<number>(flowDuration)
-	const [key, setKey] = useState<number>(0)
+	const [timer, setTimer] = useState<ITimer>({
+		isStarting: false,
+		status: EnumStatus.WORK,
+		currentSession: 1,
+		duration: flowDuration,
+		key: 0
+	})
 
-	function statusHandler() {
-		return status == EnumStatus.WORK ? EnumStatus.REST : EnumStatus.WORK
+	function statusHandler(prevStatus: EnumStatus) {
+		return prevStatus == EnumStatus.WORK ? EnumStatus.REST : EnumStatus.WORK
 	}
 
 	function onComplete() {
-		if (currentSession == sessionCount) {
-			setStatus(EnumStatus.SUCCSESS)
-			setIsStarting(false)
+		if (timer.currentSession == sessionCount) {
+			setTimer(prevState => (
+				{
+					...prevState,
+					status: EnumStatus.SUCCSESS,
+					isStarting: false
+				}
+			))
 		} else {
-			setCurrentSession(prev => prev + 1)
-			setStatus(statusHandler())
-			setDuration(duration === breakDuration ? flowDuration : breakDuration)
-			setIsStarting(false)
-			setKey(prev => prev + 1)
+			setTimer(prevState => (
+				{
+					currentSession: prevState.currentSession + 1,
+					status: statusHandler(prevState.status),
+					duration: prevState.duration === breakDuration ? flowDuration : breakDuration,
+					isStarting: false,
+					key: prevState.key + 1
+				}
+			))
 		}
 	}
 
 	function onPrev() {
-		setStatus(statusHandler())
-		setCurrentSession(prev => prev - 1)
-		setKey(prev => prev - 1)
-		setIsStarting(false)
-		setDuration(status == EnumStatus.WORK ? breakDuration : flowDuration)
+		setTimer(prevState => ({
+			status: statusHandler(prevState.status),
+			currentSession: prevState.currentSession - 1,
+			key: prevState.key - 1,
+			isStarting: false,
+			duration: prevState.status == EnumStatus.WORK ? breakDuration : flowDuration
+		}))
 	}
 
 	function onNext() {
-		setStatus(statusHandler())
-		setCurrentSession(prev => prev + 1)
-		setKey(prev => prev + 1)
-		setIsStarting(false)
-		setDuration(status == EnumStatus.WORK ? breakDuration : flowDuration)
+		setTimer(prevState => (
+			{
+				currentSession: prevState.currentSession + 1,
+				status: statusHandler(prevState.status),
+				duration: prevState.status == EnumStatus.WORK ? breakDuration : flowDuration,
+				isStarting: false,
+				key: prevState.key + 1
+			}
+		))
 	}
 
-	function reset(){
-		setStatus(EnumStatus.WORK)
-		setCurrentSession(1)
-		setDuration(flowDuration)
-		setKey(0)
-		setIsStarting(false)
+	function reset() {
+		setTimer(prevState => (
+			{
+				currentSession: 1,
+				status: EnumStatus.WORK,
+				duration: flowDuration,
+				isStarting: false,
+				key: 0
+			}
+		))
 	}
 	return (
 		<View className='flex-1 justify-center'>
 			<View className='self-center'>
 				{/* TODO */}
 				<CountdownCircleTimer
-					key={key}
-					isPlaying={isStarting}
-					duration={duration}
+					key={timer.key}
+					isPlaying={timer.isStarting}
+					duration={timer.duration}
 					colors={['#3A3570', '#664EF3']}
 					colorsTime={[
-						status == EnumStatus.WORK ? flowDuration : breakDuration,
+						timer.duration,
 						0
 					]}
 					trailColor='#2F2F4C'
@@ -83,7 +103,7 @@ const Timer: FC = () => {
 						const minutes = Math.floor((remainingTime % 3600) / 60)
 						const seconds = remainingTime % 60
 
-						if (status == EnumStatus.SUCCSESS) {
+						if (timer.status == EnumStatus.SUCCSESS) {
 							return (
 								<Text className='color-white text-4xl font-bold'>
 									{EnumStatus.SUCCSESS}!
@@ -96,7 +116,7 @@ const Timer: FC = () => {
 								<>
 									<Text className='color-white text-5xl font-bold'>{`${minutes < 10 ? '0' : ''}${minutes}:${seconds < 10 ? '0' : ''}${seconds}`}</Text>
 									<Text className='text-white mt-2 text-center text-xl'>
-										Time to {status}
+										Time to {timer.status}
 									</Text>
 								</>
 							)
@@ -106,7 +126,7 @@ const Timer: FC = () => {
 							<>
 								<Text className='color-white text-5xl font-bold'>{`${hours < 10 ? '0' : ''}${hours}:${minutes < 10 ? '0' : ''}${minutes}:${seconds < 10 ? '0' : ''}${seconds}`}</Text>
 								<Text className='text-white mt-2 text-center text-xl'>
-									Time to {status}
+									Time to {timer.status}
 								</Text>
 							</>
 						)
@@ -126,19 +146,19 @@ const Timer: FC = () => {
 										'bg-[#2C2B3C] rounded-full',
 										{
 											'bg-primary':
-												index + 1 <= currentSession ||
-												status == EnumStatus.SUCCSESS,
+												index + 1 <= timer.currentSession ||
+												timer.status == EnumStatus.SUCCSESS,
 											'bg-transparent w-6 h-6 border-4 border-primary':
-												index === currentSession - 1 &&
-												status !== EnumStatus.SUCCSESS,
+												index === timer.currentSession - 1 &&
+												timer.status !== EnumStatus.SUCCSESS,
 											'w-6 h-6 border-4 border-primary':
-												index === currentSession - 1 &&
+												index === timer.currentSession - 1 &&
 												index === sessionCount - 1,
 											'w-4 h-4':
-												isSmallIndicator && index === currentSession - 1,
+												isSmallIndicator && index === timer.currentSession - 1,
 											'w-4 h-4 border-4 border-primary':
 												isSmallIndicator &&
-												index === currentSession - 1 &&
+												index === timer.currentSession - 1 &&
 												index === sessionCount - 1
 										}
 									)}
@@ -149,7 +169,7 @@ const Timer: FC = () => {
 											isSmallIndicator ? 'w-3' : 'w-5',
 											'h-0.5 bg-[#2C2B3C]',
 											{
-												'bg-primary': index + 2 <= currentSession
+												'bg-primary': index + 2 <= timer.currentSession
 											}
 										)}
 									/>
@@ -161,9 +181,9 @@ const Timer: FC = () => {
 			<View className='flex-row mt-10 items-center justify-center'>
 				<Pressable
 					onPress={() => onPrev()}
-					disabled={currentSession == 1 || status == EnumStatus.SUCCSESS}
+					disabled={timer.currentSession == 1 || timer.status == EnumStatus.SUCCSESS}
 					className={
-						currentSession == 1 || status == EnumStatus.SUCCSESS
+						timer.currentSession == 1 || timer.status == EnumStatus.SUCCSESS
 							? 'opacity-[0.5]'
 							: ''
 					}
@@ -174,20 +194,27 @@ const Timer: FC = () => {
 				<Pressable
 					className={cn(
 						'mx-4 bg-primary w-20 h-20 items-center justify-center rounded-full',
-						{ 'pl-1.5': !isStarting},
-						{'pl-0': status == EnumStatus.SUCCSESS}
+						{ 'pl-1.5': !timer.isStarting },
+						{ 'pl-0': timer.status == EnumStatus.SUCCSESS }
 					)}
-					onPress={() => {
-						if (status == EnumStatus.SUCCSESS) {
-							reset()
-						} else {
-							setIsStarting(!isStarting)
-						}
-					}}
-					style={isStarting && AppConstant.shadow}
+					onPress={() =>
+						timer.status == EnumStatus.SUCCSESS ? reset() : setTimer(prevState => (
+							{
+								...prevState,
+								isStarting: !prevState.isStarting
+							}
+						))
+					}
+					style={timer.isStarting && AppConstant.shadow}
 				>
 					<Feather
-						name={status == EnumStatus.SUCCSESS ? 'refresh-cw' : isStarting ? 'pause' : 'play'}
+						name={
+							timer.status == EnumStatus.SUCCSESS
+								? 'refresh-cw'
+								: timer.isStarting
+									? 'pause'
+									: 'play'
+						}
 						color='white'
 						size={44}
 					></Feather>
@@ -195,8 +222,8 @@ const Timer: FC = () => {
 
 				<Pressable
 					onPress={() => onNext()}
-					disabled={currentSession == sessionCount}
-					className={currentSession == sessionCount ? 'opacity-[0.5]' : ''}
+					disabled={timer.currentSession == sessionCount}
+					className={timer.currentSession == sessionCount ? 'opacity-[0.5]' : ''}
 				>
 					<Feather name={'arrow-right'} color='white' size={34}></Feather>
 				</Pressable>
