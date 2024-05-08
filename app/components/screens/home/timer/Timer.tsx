@@ -7,7 +7,6 @@ import { flowDuration, sessionCount, breakDuration } from './timer.constants'
 import SessionIndicator from './session-indicator/SessionIndicator'
 import Actions from './actions/Actions'
 
-
 const Timer: FC = () => {
 	const [timer, setTimer] = useState<ITimer>({
 		isStarting: false,
@@ -39,7 +38,7 @@ const Timer: FC = () => {
 		}
 	}
 
-	function statusHandler(){
+	function startHandler() {
 		setTimer(prevState => ({
 			...prevState,
 			isStarting: !prevState.isStarting
@@ -85,16 +84,24 @@ const Timer: FC = () => {
 			<View className='self-center'>
 				{/* TODO */}
 				<CircleTimer
+					{...timer}
 					onComplete={onComplete}
-					key={timer.key}
-					isStarting={timer.isStarting}
-					status={timer.status}
-					duration={timer.duration}
+					newKey={timer.key}
 				/>
-				<SessionIndicator sessionCount={sessionCount} currentSession={timer.currentSession} status={timer.status}/>
+				<SessionIndicator
+					sessionCount={sessionCount}
+					currentSession={timer.currentSession}
+					status={timer.status}
+				/>
 			</View>
-			<Actions currentSession={timer.currentSession} status={timer.status} reset={reset} isStarting={timer.isStarting} onNext={onNext} onPrev={onPrev} sessionCount={sessionCount} startHandler={statusHandler}/>
-			
+			<Actions
+				{...timer}
+				sessionCount={sessionCount}
+				reset={reset}
+				onNext={onNext}
+				onPrev={onPrev}
+				startHandler={startHandler}
+			/>
 		</View>
 	)
 }

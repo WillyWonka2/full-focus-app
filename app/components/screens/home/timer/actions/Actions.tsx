@@ -2,14 +2,11 @@ import { FC } from 'react'
 import { View, Pressable } from 'react-native'
 import cn from 'clsx'
 import { Feather } from '@expo/vector-icons'
-import { EnumStatus } from '../timer.interface'
+import { EnumStatus, ITimer } from '../timer.interface'
 import { AppConstant } from '@/app.const'
 import Arrow from './Arrow'
 
-interface IActionsProps {
-	currentSession: number
-	status: EnumStatus
-	isStarting: boolean
+interface IActionsProps extends Omit<ITimer, 'key' | 'duration'> {
 	sessionCount: number
 	onNext: () => void
 	reset: () => void

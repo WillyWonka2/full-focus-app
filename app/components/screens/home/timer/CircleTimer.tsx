@@ -2,9 +2,14 @@ import { FC } from 'react'
 import React from 'react'
 import { Text } from 'react-native'
 import { CountdownCircleTimer } from 'react-native-countdown-circle-timer'
-import { EnumStatus } from './timer.interface'
+import { EnumStatus, ITimer } from './timer.interface'
 
-const CircleTimer: FC<any> = ({
+interface ICircleTimer extends Omit<ITimer, 'currentSession' | 'key'>{
+    onComplete: ()=> void
+	newKey: ITimer['key']
+}
+
+const CircleTimer: FC<ICircleTimer> = ({
 	onComplete,
 	newKey,
 	isStarting,

@@ -1,15 +1,13 @@
 import { FC } from 'react'
 import { View, Text } from 'react-native'
-import { EnumStatus } from '../timer.interface'
+import { EnumStatus, ITimer } from '../timer.interface'
 import cn from 'clsx'
 import { sessionCount } from '../timer.constants'
 
 const isSmallIndicator = sessionCount > 7
 
-interface ISessionIndicator {
+interface ISessionIndicator extends Omit<ITimer, 'key' | 'isStarting' | 'duration'> {
 	sessionCount: number
-	currentSession: number
-	status: EnumStatus
 }
 
 const SessionIndicator: FC<ISessionIndicator> = ({
