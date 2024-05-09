@@ -1,9 +1,16 @@
 import React, { FC } from 'react'
 import { Pressable } from 'react-native'
-import { EnumStatus } from '../timer.interface'
+import { EnumStatus, ITimer } from '../timer.interface'
 import { Feather } from '@expo/vector-icons'
 
-const Arrow: FC<any> = ({
+interface IArrowProps extends Pick<ITimer, 'status' | 'currentSession'>{
+	onPrev: () => void
+	onNext: () => void
+	direction: 'left' | 'right'
+	sessionCount: number
+}
+
+const Arrow: FC<IArrowProps> = ({
 	onPrev,
 	onNext,
 	currentSession,
