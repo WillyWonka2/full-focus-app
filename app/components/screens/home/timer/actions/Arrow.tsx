@@ -1,5 +1,5 @@
 import React, { FC } from 'react'
-import { View, Text, Pressable } from 'react-native'
+import { Pressable } from 'react-native'
 import { EnumStatus } from '../timer.interface'
 import { Feather } from '@expo/vector-icons'
 
