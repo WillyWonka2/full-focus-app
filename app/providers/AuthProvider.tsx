@@ -8,7 +8,6 @@ import React, {
 	useEffect,
 	useState
 } from 'react'
-import { View, Text } from 'react-native'
 import type { IUser } from '@/types/user.interface.ts'
 
 export type TypeUserState = IUser | null
@@ -23,7 +22,7 @@ export const AuthContext = createContext({} as IContext)
 Splash.preventAutoHideAsync()
 
 const AuthProvider: FC<PropsWithChildren<unknown>> = ({ children }) => {
-	const [user, setUser] = useState<TypeUserState>({_id: '', password: '', email: 'vova@gmail.com'}) // changeit null default
+	const [user, setUser] = useState<TypeUserState>({} as IUser) // changeit null default
 
 	useEffect(() => {
 		let isMounted = false

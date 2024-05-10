@@ -6,6 +6,7 @@ import CircleTimer from './CircleTimer'
 import { flowDuration, sessionCount, breakDuration } from './timer.constants'
 import SessionIndicator from './session-indicator/SessionIndicator'
 import Actions from './actions/Actions'
+import ConfettiCannon from 'react-native-confetti-cannon'
 
 const Timer: FC = () => {
 	const [timer, setTimer] = useState<ITimer>({
@@ -81,13 +82,19 @@ const Timer: FC = () => {
 
 	return (
 		<View className='flex-1 justify-center'>
-			<View className='self-center'>
-				{/* TODO */}
-				<CircleTimer
-					{...timer}
-					onComplete={onComplete}
-					newKey={timer.key}
-				/>
+			{timer.status == EnumStatus.SUCCSESS && (
+				<View className='flex-1 absolute bottom-0 left-[-35] z-10'>
+					<ConfettiCannon
+						count={300}
+						origin={{ x: 0, y: 0 }}
+						colors={['purple', 'pink', 'white']}
+						fallSpeed={6000}
+						fadeOut={true}
+					/>
+				</View>
+			)}
+			<View className='self-center relative z-1'>
+				<CircleTimer {...timer} onComplete={onComplete} newKey={timer.key} />
 				<SessionIndicator
 					sessionCount={sessionCount}
 					currentSession={timer.currentSession}
